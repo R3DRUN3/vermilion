@@ -7,16 +7,16 @@ I suggest using also [*ngrok*](https://ngrok.com/), [*Cloudflare Tunnels*](https
 ## Instructions  
 
 Launch the python endpoint:  
-```sh
+```console
 python3 endpoint.py
 ```  
 Expose the endpoint server publicly via `ngrok`:  
-```sh
+```console
 ngrok http 8089
 ```  
 
 Launch Vermilion:  
-```sh
+```console
 go run main.go -e https://<your-ngrok-endpoint-here>
 ```  
 

