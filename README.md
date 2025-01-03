@@ -1,6 +1,6 @@
 # vermilion  
 
-[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)  ![Red Team Badge](https://img.shields.io/badge/Team-Red-red)
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)  ![Red Team Badge](https://img.shields.io/badge/Team-Red-red) [![Go Report Card](https://goreportcard.com/badge/github.com/r3drun3/vermilion)](https://goreportcard.com/report/github.com/r3drun3/vermilion)  
 
 <img src="./docs/media/vermilion_logo.png" width="250x" />  
 
