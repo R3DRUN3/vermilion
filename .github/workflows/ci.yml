@@ -45,25 +45,37 @@ jobs:
   #         with:
   #           args: -exclude=G301, G304, G306 
   
-  goreleaser:
+  build:
+    name: Build for Linux AMD64 and ARM
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goarch: [amd64, arm64] # Target architectures
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          fetch-depth: 0
-      -
-        name: Set up Go
-        uses: actions/setup-go@v5
-      -
-        name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+          go-version: '1.20' # Adjust to your Go version if needed
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
         with:
-          # either 'goreleaser' (default) or 'goreleaser-pro'
-          distribution: goreleaser
-          # 'latest', 'nightly', or a semver
-          version: '~> v2'
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build binary
+        run: |
+          GOOS=linux GOARCH=${{ matrix.goarch }} go build -o dist/vermilion-${{ matrix.goarch }} main.go
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: vermilion-${{ matrix.goarch }}
+          path: dist/vermilion-${{ matrix.goarch }}
