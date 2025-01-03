@@ -24,7 +24,7 @@ To run the tool with no exfiltration run:
 vermilion --noexf
 ```  
 
-both the previous command produce a local `exdata` folder with a compressed (.zip) archive inside.  
+The previous command produce a local `exdata` folder with a compressed (.zip) archive inside.  
 The archive contains all exfiltrated data.  
 
 
