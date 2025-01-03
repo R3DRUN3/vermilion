@@ -4,13 +4,19 @@ project_name: vermilion
 
 builds:
   - id: linux_amd64
-    goos: linux
-    goarch: amd64
-    output: "vermilion-linux-amd64"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    binaries:
+      - vermilion
   - id: linux_arm64
-    goos: linux
-    goarch: arm64
-    output: "vermilion-linux-arm64"
+    goos:
+      - linux
+    goarch:
+      - arm64
+    binaries:
+      - vermilion
 
 release:
   github:
@@ -18,7 +24,7 @@ release:
     name: vermilion
 
 archives:
-  - format: tar.gz
+  - id: linux
+    format: tar.gz
     files:
-      - vermilion-linux-amd64
-      - vermilion-linux-arm64
+      - vermilion
