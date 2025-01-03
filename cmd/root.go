@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/r3drun3/vermilion/internal"
 	"github.com/spf13/cobra"
@@ -12,14 +11,12 @@ import (
 var (
 	endpoint string
 	noExf    bool
-	timeout  int
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "vermilion",
 	Short: "Vermilion - Rapid sensitive info exfiltration tool",
 	Run: func(cmd *cobra.Command, args []string) {
-		start := time.Now()
 
 		// Directory to save files if no exfiltration
 		outputDir := "exdata"
@@ -54,19 +51,12 @@ var rootCmd = &cobra.Command{
 		} else {
 			fmt.Println("Exfiltration skipped.")
 		}
-
-		// Check timeout
-		if timeout > 0 && time.Since(start).Seconds() > float64(timeout) {
-			fmt.Println("Execution timeout reached. Exiting.")
-			return
-		}
 	},
 }
 
 func Execute() {
 	rootCmd.PersistentFlags().StringVarP(&endpoint, "endpoint", "e", "", "Exfiltration endpoint URL")
 	rootCmd.PersistentFlags().BoolVarP(&noExf, "noexf", "n", false, "Skip exfiltration and save locally")
-	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 0, "Timeout in seconds")
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

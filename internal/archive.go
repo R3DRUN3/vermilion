@@ -22,6 +22,12 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	var archivesList []string
 	ctx := context.TODO()
 
+	// Create a single archive for all files and directories
+	archiveName := "all_sensitive_data.zip"
+	archivePath := filepath.Join(outputDir, archiveName)
+
+	// Prepare a map of files to include in the archive
+	fileMap := make(map[string]string)
 	for _, path := range paths {
 		info, err := os.Stat(path)
 		if err != nil {
@@ -29,49 +35,65 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 			continue
 		}
 
-		// Generate archive name based on the path
-		baseName := strings.ReplaceAll(path, string(filepath.Separator), "_")
-		baseNameWithoutDots := strings.ReplaceAll(baseName, ".", "")
-		archivePath := filepath.Join(outputDir, baseNameWithoutDots+".zip")
-
-		// Map the directory (or file) to its desired path in the archive
-		mapPath := baseName
 		if info.IsDir() {
-			// For directories, archive them entirely as a folder
-			mapPath = baseName
+			err = filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
+				if err == nil && !info.IsDir() {
+					// Replace path separators with underscores to create unique names
+					relativePath, _ := filepath.Rel("/", p) // Use absolute root as base
+					uniqueName := strings.ReplaceAll(relativePath, string(filepath.Separator), "_")
+					fileMap[p] = uniqueName
+				}
+				return nil
+			})
+			if err != nil {
+				fmt.Printf("Failed to walk directory %s: %v\n", path, err)
+			}
+		} else {
+			// Replace path separators with underscores for individual files
+			relativePath, _ := filepath.Rel("/", path) // Use absolute root as base
+			uniqueName := strings.ReplaceAll(relativePath, string(filepath.Separator), "_")
+			fileMap[path] = uniqueName
 		}
-		files, err := archives.FilesFromDisk(ctx, nil, map[string]string{
-			path: mapPath, // Include the directory or file in the archive
-		})
-		if err != nil {
-			fmt.Printf("Failed to map files from disk for %s: %v\n", path, err)
-			continue
-		}
-
-		// Create the output archive file
-		out, err := os.Create(archivePath)
-		if err != nil {
-			fmt.Printf("Failed to create archive file %s: %v\n", archivePath, err)
-			continue
-		}
-		defer out.Close()
-
-		// Create a compressed tarball format
-		format := archives.CompressedArchive{
-			Compression: archives.Gz{},
-			Archival:    archives.Tar{},
-		}
-
-		// Create the archive
-		err = format.Archive(ctx, out, files)
-		if err != nil {
-			fmt.Printf("Failed to archive %s: %v\n", path, err)
-			continue
-		}
-
-		fmt.Printf("Archived %s to %s\n", path, archivePath)
-		archivesList = append(archivesList, archivePath)
 	}
+
+	if len(fileMap) == 0 {
+		fmt.Println("No files to archive.")
+		return nil, nil
+	}
+
+	// Include system_info.json if it exists in the output directory
+	systemInfoPath := filepath.Join(outputDir, "system_info.json")
+	if _, err := os.Stat(systemInfoPath); err == nil {
+		fileMap[systemInfoPath] = "system_info.json"
+	}
+
+	// Create the output archive file
+	out, err := os.Create(archivePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create archive file %s: %w", archivePath, err)
+	}
+	defer out.Close()
+
+	// Create a compressed tarball format
+	format := archives.CompressedArchive{
+		Compression: archives.Gz{},
+		Archival:    archives.Tar{},
+	}
+
+	// Add files to the archive
+	files, err := archives.FilesFromDisk(ctx, nil, fileMap)
+	if err != nil {
+		return nil, fmt.Errorf("failed to map files from disk: %w", err)
+	}
+
+	// Write the archive
+	err = format.Archive(ctx, out, files)
+	if err != nil {
+		return nil, fmt.Errorf("failed to archive files: %w", err)
+	}
+
+	fmt.Printf("Created archive at %s\n", archivePath)
+	archivesList = append(archivesList, archivePath)
 
 	return archivesList, nil
 }

