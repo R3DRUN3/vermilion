@@ -4,7 +4,7 @@ project_name: vermilion
 
 builds:
   - id: vermilion_build
-    main: ./cmd/vermilion/main.go
+    main: ./main.go
     goos:
       - linux
     goarch:
