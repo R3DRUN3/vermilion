@@ -1,0 +1,22 @@
+project_name: vermilion
+
+builds:
+  - id: linux_amd64
+    goos: linux
+    goarch: amd64
+    output: "vermilion-linux-amd64"
+  - id: linux_arm64
+    goos: linux
+    goarch: arm64
+    output: "vermilion-linux-arm64"
+
+release:
+  github:
+    owner: r3drun3
+    name: vermilion
+
+archives:
+  - format: tar.gz
+    files:
+      - vermilion-linux-amd64
+      - vermilion-linux-arm64
