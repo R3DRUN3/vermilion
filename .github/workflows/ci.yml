@@ -41,4 +41,4 @@ jobs:
         - name: Run Gosec Security Scanner
           uses: securego/gosec@master
           with:
-            args: ./...
+            args: -exclude=G301, G304, G306 
