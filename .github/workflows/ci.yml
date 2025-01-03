@@ -6,6 +6,12 @@ on:
       - main
     tags:
       - 'v*.*.*' # Trigger on semantic versioning tags
+    paths-ignore:
+      - 'docs/**'
+      - 'tests/**'
+      - 'README.md'
+      - '.gitignore'
+
   pull_request:
     branches:
       - main
