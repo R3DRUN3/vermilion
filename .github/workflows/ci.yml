@@ -48,6 +48,8 @@ jobs:
   goreleaser:
     name: Build and Release with Goreleaser
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     # needs:
     #   - lint
     #   - security
