@@ -43,7 +43,7 @@ jobs:
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:
-          args: -exclude=G301,G304,G306
+          args: ./... -exclude=G301,G304,G306
 
   build-and-publish:
     name: Build and Publish Binaries
