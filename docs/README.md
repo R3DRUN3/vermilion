@@ -15,12 +15,12 @@ chmod +x vermilion
 ## Usage
 In order to see the tool helper run:  
 ```console
-./vermilion -h
+vermilion -h
 ```  
 
 By default no exfiltration is executed, the following two commands are the same:
 ```console
-./vermilion
+vermilion
 ```
 and
 ```console
