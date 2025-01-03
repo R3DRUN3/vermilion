@@ -5,7 +5,7 @@
 <img src="./docs/media/vermilion_logo.png" width="250x" />  
 
 
-Linux post exploitation tool for info gathering and exfiltration.  
+Linux post exploitation tool for info gathering and exfiltration 🐧 📡 💀
 
 
 
@@ -27,8 +27,15 @@ Additionally, it provides the option to exfiltrate the collected data via an HTT
 
 The implementation of the endpoint for exfiltration is outside the scope of this tool; for an example, refer to [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/red-team-infra#deploy-a-lambda-function-for-data-exfiltration) resource.
 
-### Video Demo
 
+## Example Use Case   
+Imagine being engaged in a red teaming campaign and successfully compromising a Linux machine.    
+Linux environments often are treasure trove of sensitive data and information due to their use as servers and their integration with other systems and softwares.  
+Therefore, it is crucial to have an automated tool that enables rapid collection and exfiltration of sensitive information, such as environment variables and strategic directories, within seconds.  
+
+This is where *Vermilion* proves helpful!  
+
+### Video Demo
 
 
 https://github.com/user-attachments/assets/76d510fe-2aac-4014-b3d6-c6b5563aa057
