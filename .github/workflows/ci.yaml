@@ -1,0 +1,116 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+    steps:
+      steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60
+
+  # test:
+  #   name: Run Tests
+  #   runs-on: ubuntu-latest
+  #   permissions: 
+  #     contents: read
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version: '1.21'
+  #     - name: Install Dependencies
+  #       run: go mod tidy
+  #     - name: Run Tests
+  #       run: go test ./... -v -coverprofile=coverage.out
+  #     - name: Upload Coverage Report
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: coverage-report
+  #         path: coverage.out
+
+  # security:
+  #   name: Security Scans
+  #   runs-on: ubuntu-latest
+  #   permissions: 
+  #     contents: read
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #     - name: Dependency Vulnerability Check
+  #       uses: aquasecurity/trivy-action@v0.12.0
+  #       with:
+  #         scan-type: 'fs'
+  #         ignore-unfixed: true
+  #     - name: Static Code Analysis (Gosec)
+  #       run: |
+  #         go install github.com/securego/gosec/v2/cmd/gosec@latest
+  #         gosec ./...
+  #     - name: Static Code Analysis with CodeQL
+  #       uses: github/codeql-action/init@v2
+  #       with:
+  #         languages: 'go'
+  #     - name: Run CodeQL Analysis
+  #       uses: github/codeql-action/analyze@v2
+
+  # build:
+  #   name: Build and Sign CLI
+  #   runs-on: ubuntu-latest
+  #   permissions: 
+  #     contents: read
+  #     id-token: write
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version: '1.21'
+  #     - name: Build Application
+  #       run: go build -o bin/cli .
+  #     - name: Harden Runner
+  #       run: |
+  #         echo "Implement security hardening steps for self-hosted runners (e.g., ephemeral instances)."
+  #     - name: Sign Artifact with Cosign
+  #       env:
+  #         COSIGN_EXPERIMENTAL: "true"
+  #       run: |
+  #         go install sigstore/cosign/cmd/cosign@latest
+  #         cosign sign --keyless --repo-root . bin/cli
+  #     - name: Upload Build Artifact
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: cli
+  #         path: bin/cli
+
+  # deploy:
+  #   name: Deployment Placeholder
+  #   runs-on: ubuntu-latest
+  #   permissions: 
+  #     contents: read
+  #   needs: [lint, test, security, build]
+  #   steps:
+  #     - name: Placeholder
+  #       run: echo "Deployment step goes here."
