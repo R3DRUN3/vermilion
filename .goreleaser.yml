@@ -7,7 +7,7 @@ builds:
     # ID of the build.
     #
     # Default: Project directory name.
-    id: "my-build"
+    id: "vermilion"
 
     # Path to main.go file or main package.
     # Notice: when used with `gomod.proxy`, this must be a package.

@@ -10,9 +10,9 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-  id-token: write
+# permissions:
+#   contents: read
+#   id-token: write
 
 jobs:
   # lint:
