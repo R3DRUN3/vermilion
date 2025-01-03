@@ -28,20 +28,20 @@ jobs:
         with:
           version: v1.60
 
-security:
-    name: Security Scanning
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - uses: securego/gosec-action@v1
-        with:
-          args: "./..." # Scan all packages
-      - name: Upload Security Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: gosec-report
-          path: gosec.json
+  security:
+      name: Security Scanning
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+        - uses: securego/gosec-action@v1
+          with:
+            args: "./..." # Scan all packages
+        - name: Upload Security Report
+          uses: actions/upload-artifact@v3
+          with:
+            name: gosec-report
+            path: gosec.json
