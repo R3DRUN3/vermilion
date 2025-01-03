@@ -25,7 +25,14 @@ Vermilion collects system information and sensitive directories/files, such as `
 
 Additionally, it provides the option to exfiltrate the collected data via an HTTP `POST` request to a specified endpoint.   
 
-The implementation of the endpoint for exfiltration is outside the scope of this tool; for an example, refer to [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/red-team-infra#deploy-a-lambda-function-for-data-exfiltration) resource.  
+The implementation of the endpoint for exfiltration is outside the scope of this tool; for an example, refer to [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/red-team-infra#deploy-a-lambda-function-for-data-exfiltration) resource.
+
+### Video Demo
+
+
+
+https://github.com/user-attachments/assets/76d510fe-2aac-4014-b3d6-c6b5563aa057
+
 
 
 ## Getting Started  
