@@ -1,6 +1,6 @@
 # Test Exfiltration Locally
 
-This directory contains a simple http server writte in python to test exfiltration locally.  
+This directory contains a simple http server written in python to test exfiltration locally.  
 
 I suggest using also [*ngrok*](https://ngrok.com/), [*Cloudflare Tunnels*](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) or similar, to expose the exfiltration endpoint publicly for the tests.  
 
