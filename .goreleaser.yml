@@ -1,0 +1,28 @@
+version: 2
+
+project_name: vermilion
+
+builds:
+  - id: vermilion_build
+    main: ./cmd/vermilion/main.go
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    binary: vermilion
+
+archives:
+  - id: vermilion_archive
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - "dist/{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ .Ext }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+release:
+  github:
+    owner: r3drun3
+    name: vermilion
