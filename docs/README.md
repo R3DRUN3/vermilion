@@ -4,7 +4,7 @@
 ## Installation  
 
 New version of the tool are released via Github.  
-You can retrieve the release you want from this page.  
+You can retrieve the release you want from [*this*](https://github.com/R3DRUN3/vermilion/releases/) page.  
 Example via bash (wget):  
 ```sh
 wget https://github.com/R3DRUN3/vermilion/releases/download/v0.1.0/vermilion_0.1.0_linux_amd64.tar.gz
