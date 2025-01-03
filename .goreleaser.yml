@@ -11,13 +11,15 @@ builds:
       - amd64
       - arm64
     binary: vermilion
+    ldflags:
+      - -s -w
 
 archives:
   - id: vermilion_archive
     format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - "dist/vermilion_{{ .Os }}_{{ .Arch }}"
+      - "dist/{{ .ArtifactName }}/vermilion"
 
 checksum:
   name_template: "checksums.txt"
