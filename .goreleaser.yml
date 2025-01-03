@@ -17,7 +17,7 @@ archives:
     format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - "dist/{{ .Binary }}"
+      - "{{ .ProjectName }}"  # Matches the binary name directly in the dist folder.
 
 checksum:
   name_template: "checksums.txt"
