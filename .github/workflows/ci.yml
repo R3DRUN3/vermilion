@@ -33,15 +33,12 @@ jobs:
       runs-on: ubuntu-latest
       permissions:
         contents: read
+      env:
+        GO111MODULE: on
       steps:
-        - uses: actions/checkout@v4
+        - name: Checkout Source
+          uses: actions/checkout@v4
+        - name: Run Gosec Security Scanner
+          uses: securego/gosec@master
           with:
-            fetch-depth: 1
-        - uses: securego/gosec-action@v1
-          with:
-            args: "./..." # Scan all packages
-        - name: Upload Security Report
-          uses: actions/upload-artifact@v3
-          with:
-            name: gosec-report
-            path: gosec.json
+            args: ./...
