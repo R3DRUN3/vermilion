@@ -17,7 +17,7 @@ archives:
     format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - "{{ .ProjectName }}"  # Matches the binary name directly in the dist folder.
+      - "dist/vermilion_{{ .Os }}_{{ .Arch }}"
 
 checksum:
   name_template: "checksums.txt"
