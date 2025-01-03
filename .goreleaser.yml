@@ -4,21 +4,20 @@ project_name: vermilion
 
 builds:
   - id: vermilion_build
-    main: ./main.go
+    main: ./main.go # Correctly pointing to the root directory
     goos:
       - linux
     goarch:
       - amd64
       - arm64
     binary: vermilion
-    dir: dist
 
 archives:
   - id: vermilion_archive
     format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - "{{ .Binary }}"
+      - "dist/{{ .Binary }}"
 
 checksum:
   name_template: "checksums.txt"
