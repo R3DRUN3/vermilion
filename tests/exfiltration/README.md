@@ -17,7 +17,7 @@ ngrok http 8089
 
 Launch Vermilion:  
 ```console
-go run main.go -e https://<your-ngrok-endpoint-here>
+vermilion -e https://<your-ngrok-endpoint-here>
 ```  
 
 If everything went well you should see the exported archive in the current directory!  
