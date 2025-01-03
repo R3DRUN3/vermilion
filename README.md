@@ -14,7 +14,21 @@ Linux post exploitation tool for info gathering and exfiltration.
 Its primary purpose is to streamline the process of gathering critical data in red teaming scenarios.  
 
 
-## Instructions  
+> [!CAUTION]  
+> This tool is in the early stages of development; as such, it may contain bugs or unhandled edge cases.    
+> Vermilion has been designed as a resource for red teaming campaigns and/or educational purposes.  
+> The author assumes no responsibility for the weaponization of this tool or the improper handling of sensitive data collected through its use.  
 
-In order to get started, follow the [*docs*](./docs/README.md).  
+
+## How It Works  
+Vermilion collects system information and sensitive directories/files, such as `.ssh`, `.aws`, `.docker`, `/etc/passwd`, and more, then creates a compressed archive containing them. 
+
+Additionally, it provides the option to exfiltrate the collected data via an HTTP `POST` request to a specified endpoint.   
+
+The implementation of the endpoint for exfiltration is outside the scope of this tool; for an example, refer to [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/red-team-infra#deploy-a-lambda-function-for-data-exfiltration) resource.  
+
+
+## Getting Started  
+
+In order to get started with vermilion, follow the [*docs*](./docs/README.md).  
 

