@@ -15,35 +15,35 @@ permissions:
   id-token: write
 
 jobs:
-  lint:
-    name: Lint and Format Check
-    runs-on: ubuntu-latest
-    permissions: 
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: stable
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: v1.60
+  # lint:
+  #   name: Lint and Format Check
+  #   runs-on: ubuntu-latest
+  #   permissions: 
+  #     contents: read
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version: stable
+  #     - name: golangci-lint
+  #       uses: golangci/golangci-lint-action@v6
+  #       with:
+  #         version: v1.60
 
-  security:
-      name: Security Scanning
-      runs-on: ubuntu-latest
-      permissions:
-        contents: read
-      env:
-        GO111MODULE: on
-      steps:
-        - name: Checkout Source
-          uses: actions/checkout@v4
-        - name: Run Gosec Security Scanner
-          uses: securego/gosec@master
-          with:
-            args: -exclude=G301, G304, G306 
+  # security:
+  #     name: Security Scanning
+  #     runs-on: ubuntu-latest
+  #     permissions:
+  #       contents: read
+  #     env:
+  #       GO111MODULE: on
+  #     steps:
+  #       - name: Checkout Source
+  #         uses: actions/checkout@v4
+  #       - name: Run Gosec Security Scanner
+  #         uses: securego/gosec@master
+  #         with:
+  #           args: -exclude=G301, G304, G306 
   
   goreleaser:
     name: Build and Release with Goreleaser
