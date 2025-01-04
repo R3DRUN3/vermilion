@@ -23,7 +23,7 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	ctx := context.TODO()
 
 	// Create a single archive for all files and directories
-	archiveName := "all_sensitive_data.zip"
+	archiveName := "all_sensitive_data.tar.gz"
 	archivePath := filepath.Join(outputDir, archiveName)
 
 	// Prepare a map of files to include in the archive
