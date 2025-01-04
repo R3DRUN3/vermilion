@@ -120,6 +120,9 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 		if homeDir == "/root" && !isRoot {
 			continue
 		}
+		if _, err := os.Stat(homeDir); err != nil {
+			continue
+		}
 
 		paths := []string{
 			filepath.Join(homeDir, ".ssh"),                   // SSH keys
