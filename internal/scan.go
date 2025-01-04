@@ -158,6 +158,7 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 			"/etc/nginx/conf.d",                              // nginx configs
 			"/var/log/auth.log",                              // Authentication logs (Linux-specific)
 			"/var/log/secure",                                // Secure logs (Red Hat/CentOS-specific)
+			"/var/log/wtmp",								  // Authentication logs, source ip
 			"/tmp/ssh-*",                                     // Temporary SSH files
 			DetectDefaultShell(),                             // Shell history
 		}
