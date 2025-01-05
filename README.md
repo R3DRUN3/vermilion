@@ -21,7 +21,7 @@ Its primary purpose is to streamline the process of gathering critical data in r
 
 
 ## How It Works  
-Vermilion collects system information and sensitive directories/files, such as `.ssh`, `.bash/zsh_history`, `.aws`, `.docker`, `.kube`, `.azure`, `/etc/passwd`, `/etc/group` , and more, then creates a compressed archive containing them. 
+Vermilion collects system information, env vars and sensitive directories/files, such as `.ssh`, `.bash/zsh_history`, `.aws`, `.docker`, `.kube`, `.azure`, `/etc/passwd`, `/etc/group` (and many others), then creates a compressed archive containing them.  
 
 Additionally, it provides the option to exfiltrate the collected data via an HTTP `POST` request to a specified endpoint.   
 
