@@ -1,38 +1,19 @@
 version: 2
 
-
 builds:
-  # You can have multiple builds defined as a yaml list
-  - #
-    # ID of the build.
-    #
-    # Default: Project directory name.
-    id: "vermilion"
-
-    # Path to main.go file or main package.
-    # Notice: when used with `gomod.proxy`, this must be a package.
-    #
-    # Default: `.`.
+  - id: "vermilion"
     main: ./main.go
-
-    # Binary name.
-    # Can be a path (e.g. `bin/app`) to wrap the binary in a directory.
-    #
-    # Default: Project directory name.
     binary: vermilion
-
-
-    # GOARCH to build for.
-    # For more info refer to: https://pkg.go.dev/cmd/go#hdr-Environment_variables
-    #
-    # Default: [ '386', 'amd64', 'arm64' ].
     goarch:
       - amd64
       - arm
       - arm64
-
-
-    # List of combinations of GOOS + GOARCH + GOARM to ignore.
     ignore:
       - goos: darwin
       - goos: windows
+    ldflags:
+      - "-s -w" # Strips symbol table and debugging information for smaller binaries
+    upx: # UPX compression
+      enabled: true
+      flags: ["--best", "--lzma"]
+
