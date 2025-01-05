@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -286,7 +286,7 @@ func getSystemUptime() (string, error) {
 
 func getLoadAverage() (string, error) {
 	if runtime.GOOS == "linux" {
-		data, err := ioutil.ReadFile("/proc/loadavg")
+		data, err := os.ReadFile("/proc/loadavg")
 		if err != nil {
 			return "", err
 		}
@@ -303,7 +303,7 @@ func getMountedFileSystems() ([]string, error) {
 	}
 	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
