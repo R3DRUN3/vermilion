@@ -52,6 +52,9 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 		"/etc/hosts",               // Hosts file
 		"/etc/ssl",                 // SSL certificates
 		"/etc/crontab",             // System-wide crontab
+		"/etc/apache2",             // Apache2 configs
+		"/etc/httpd",               // httpd configs conf/ and conf.d/
+		"/etc/nginx/conf.d",        // nginx configs
 		"/etc/cron.d",              // Directory for cron jobs
 		"/etc/cron.daily",          // Daily cron jobs
 		"/etc/cron.weekly",         // Weekly cron jobs
@@ -384,6 +387,12 @@ func DetectDefaultShell() string {
 		return filepath.Join(currentUser.HomeDir, ".zsh_history")
 	case "bash":
 		return filepath.Join(currentUser.HomeDir, ".bash_history")
+	case "ash":
+		return filepath.Join(currentUser.HomeDir, ".ash_history")
+	case "ksh":
+		return filepath.Join(currentUser.HomeDir, ".ksh_history")
+	case "tcsh":
+		return filepath.Join(currentUser.HomeDir, ".tcsh_history")
 	default:
 		return "" // Unsupported shell
 	}
