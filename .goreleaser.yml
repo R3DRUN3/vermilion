@@ -11,10 +11,11 @@ builds:
     ignore:
       - goos: darwin
       - goos: windows
-    ldflags:
-      - "-s -w" # Strips symbol table and debugging information for smaller binaries
 
-upx: # UPX compression
-  enabled: true
-  flags: ["--best", "--lzma"]
-
+upx:
+  - enabled: true
+    ids: ["vermilion"] # Filter to apply UPX only for this build
+    goos: ["linux"]    # Apply only for Linux builds
+    goarch: ["amd64", "arm", "arm64"] # Filter architectures
+    compress: best
+    lzma: true
