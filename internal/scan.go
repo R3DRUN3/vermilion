@@ -269,7 +269,7 @@ func GetSystemInfo() (map[string]interface{}, error) {
 
 func getSystemUptime() (string, error) {
 	if runtime.GOOS == "linux" {
-		data, err := ioutil.ReadFile("/proc/uptime")
+		data, err := os.ReadFile("/proc/uptime")
 		if err != nil {
 			return "", err
 		}
