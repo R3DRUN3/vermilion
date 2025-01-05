@@ -31,13 +31,17 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	for _, path := range paths {
 		info, err := os.Stat(path)
 		if err != nil {
-			fmt.Printf("Failed to stat path %s: %v\n", path, err)
+			fmt.Printf("Skipping inaccessible file or directory %s: %v\n", path, err)
 			continue
 		}
 
 		if info.IsDir() {
 			err = filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-				if err == nil && !info.IsDir() {
+				if err != nil {
+					fmt.Printf("Skipping inaccessible file %s: %v\n", p, err)
+					return nil // Continue walking the directory
+				}
+				if !info.IsDir() && canAccessFile(p) {
 					// Replace path separators with underscores to create unique names
 					relativePath, _ := filepath.Rel("/", p) // Use absolute root as base
 					uniqueName := strings.ReplaceAll(relativePath, string(filepath.Separator), "_")
@@ -46,9 +50,9 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 				return nil
 			})
 			if err != nil {
-				fmt.Printf("Failed to walk directory %s: %v\n", path, err)
+				fmt.Printf("Error walking directory %s: %v\n", path, err)
 			}
-		} else {
+		} else if canAccessFile(path) {
 			// Replace path separators with underscores for individual files
 			relativePath, _ := filepath.Rel("/", path) // Use absolute root as base
 			uniqueName := strings.ReplaceAll(relativePath, string(filepath.Separator), "_")
@@ -63,7 +67,7 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 
 	// Include system_info.json if it exists in the output directory
 	systemInfoPath := filepath.Join(outputDir, "system_info.json")
-	if _, err := os.Stat(systemInfoPath); err == nil {
+	if _, err := os.Stat(systemInfoPath); err == nil && canAccessFile(systemInfoPath) {
 		fileMap[systemInfoPath] = "system_info.json"
 	}
 
@@ -96,4 +100,15 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	archivesList = append(archivesList, archivePath)
 
 	return archivesList, nil
+}
+
+// Helper function to check if a file is accessible
+func canAccessFile(path string) bool {
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Printf("Skipping file %s: %v\n", path, err)
+		return false
+	}
+	file.Close()
+	return true
 }
