@@ -13,7 +13,8 @@ builds:
       - goos: windows
     ldflags:
       - "-s -w" # Strips symbol table and debugging information for smaller binaries
-    upx: # UPX compression
-      enabled: true
-      flags: ["--best", "--lzma"]
+
+upx: # UPX compression
+  enabled: true
+  flags: ["--best", "--lzma"]
 
