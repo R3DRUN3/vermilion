@@ -42,7 +42,7 @@ The implementation of the endpoint for exfiltration is outside the scope of this
 
 
 ## Example Use Case   
-Imagine being engaged in a red teaming campaign and successfully compromising a Linux machine.    
+Imagine being engaged in a red teaming campaign and successfully compromising a user on a Linux machine.    
 Linux environments often are treasure trove of sensitive data and information due to their use as servers and their integration with other systems and softwares.  
 Therefore, it is crucial to have an automated tool that enables rapid collection and exfiltration of sensitive information, such as environment variables and strategic directories, within seconds.  
 
