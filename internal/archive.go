@@ -104,11 +104,35 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 
 // Helper function to check if a file is accessible
 func canAccessFile(path string) bool {
-	file, err := os.Open(path)
+	info, err := os.Stat(path)
 	if err != nil {
-		fmt.Printf("Skipping file %s: %v\n", path, err)
+		// Skip inaccessible files or directories
 		return false
 	}
-	file.Close()
+
+	// Check if the path is a directory
+	if info.IsDir() {
+		// Check directory permissions
+		mode := info.Mode()
+		if mode&0400 != 0 { // Owner read permission
+			return true
+		}
+		if mode&0040 != 0 { // Group read permission
+			return true
+		}
+		if mode&0004 != 0 { // Others read permission
+			return true
+		}
+		return false
+	}
+
+	// For files, check if they are readable
+	file, err := os.Open(path)
+	if err != nil {
+		// File is not accessible
+		return false
+	}
+	defer file.Close()
+
 	return true
 }

