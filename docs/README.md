@@ -7,8 +7,8 @@ New version of the tool are released via Github.
 You can retrieve the release you want from [*this*](https://github.com/R3DRUN3/vermilion/releases/) page.  
 Example via bash (wget):  
 ```console
-wget https://github.com/R3DRUN3/vermilion/releases/download/v0.4.0/vermilion_0.4.0_linux_amd64.tar.gz
-tar -xzf vermilion_0.4.0_linux_amd64.tar.gz
+wget https://github.com/R3DRUN3/vermilion/releases/download/v0.5.0/vermilion_0.5.0_linux_amd64.tar.gz
+tar -xzf vermilion_0.5.0_linux_amd64.tar.gz
 chmod +x vermilion
 ```  
 
