@@ -146,7 +146,7 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 	return files, nil
 }
 
-// expandPath expands directories into a list of files.
+// expandPath expands directories into a list of files, excluding symlinks.
 func expandPath(path string) []string {
 	var fileList []string
 
@@ -156,9 +156,18 @@ func expandPath(path string) []string {
 			//fmt.Printf("Error accessing %s: %v\n", p, err)
 			return nil
 		}
+
+		// Skip symlinks
+		if info.Mode()&os.ModeSymlink != 0 {
+			//fmt.Printf("Skipping symlink: %s\n", p) // Debug log
+			return nil
+		}
+
+		// Add files that are not directories and are accessible
 		if !info.IsDir() && canAccessFile(p) {
 			fileList = append(fileList, p)
 		}
+
 		return nil
 	})
 
