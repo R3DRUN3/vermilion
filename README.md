@@ -38,7 +38,9 @@ Its primary purpose is to streamline the process of gathering critical data in r
 The tool creates a compressed archive of the collected data for easy local storage or exfiltration to a specified endpoint.  
 Additionally, it provides the option to exfiltrate the collected data via an HTTP `POST` request to a specified endpoint.   
 
-The implementation of the endpoint for exfiltration is outside the scope of this tool; for an example, refer to [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/red-team-infra#deploy-a-lambda-function-for-data-exfiltration) resource.
+The implementation of the endpoint for exfiltration is outside the scope of this tool; for an example, refer to [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/red-team-infra#deploy-a-lambda-function-for-data-exfiltration) resource.  
+
+Vermilion supports `amd64`, `arm` and `arm64` architectures.
 
 
 ## Example Use Case   
