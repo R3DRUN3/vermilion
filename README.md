@@ -15,7 +15,6 @@ Its primary purpose is to streamline the process of gathering critical data in r
 
 
 > [!CAUTION]  
-> This tool is in the early stages of development; as such, it may contain bugs or unhandled edge cases.    
 > Vermilion has been designed as a resource for red teamers and security researchers.  
 > The author assumes no responsibility for the weaponization of this tool or the improper handling of sensitive data collected through its use.  
 
