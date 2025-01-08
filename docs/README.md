@@ -20,7 +20,7 @@ vermilion -h
 
 example output:  
 ```console
-Vermilion - Linux info gathering and exfiltration tool
+Vermilion - Linux sensitive info gathering and exfiltration tool
 
 Usage:
   vermilion [flags]

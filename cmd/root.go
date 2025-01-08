@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/common-nighthawk/go-figure"
 	"github.com/fatih/color"
 	"github.com/r3drun3/vermilion/internal"
 	"github.com/spf13/cobra"
@@ -37,8 +38,11 @@ func expandPath(path string) string {
 
 var rootCmd = &cobra.Command{
 	Use:   "vermilion",
-	Short: "Vermilion - Rapid sensitive info exfiltration tool",
+	Short: "Vermilion - Linux sensitive info gathering and exfiltration tool",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Print the cool title
+		figure.NewColorFigure("Vermilion", "slant", "red", true).Print()
+
 		outputDir := "exdata"
 
 		// Define color styles
