@@ -47,7 +47,10 @@ Imagine being engaged in a red teaming campaign and successfully compromising a 
 Linux environments often are treasure trove of sensitive data and information due to their use as servers and their integration with other systems and softwares.  
 Therefore, it is crucial to have an automated tool that enables rapid collection and exfiltration of sensitive information, such as environment variables and strategic directories, within seconds.  
 
-This is where *Vermilion* proves helpful!  
+This is where *Vermilion* proves helpful!   
+
+Since many modern production environments are based on Linux, Vermilion proves to be a highly versatile tool.   
+Read [*this article*](https://www.neteye-blog.com/2025/01/inside-the-red-team-toolbox-linux-info-gathering/) to discover how Vermilion helped us identify a suboptimal configuration in GitHub Actions cloud runners.
 
 ### Video Demo
 
