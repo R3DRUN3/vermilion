@@ -36,6 +36,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: stable
+      - name: Download Go modules
+        run: go mod download
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
