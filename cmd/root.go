@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/common-nighthawk/go-figure"
+	figure "github.com/common-nighthawk/go-figure"
 	"github.com/fatih/color"
 	"github.com/r3drun3/vermilion/internal"
 	"github.com/spf13/cobra"
