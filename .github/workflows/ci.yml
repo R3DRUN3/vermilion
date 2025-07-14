@@ -29,19 +29,20 @@ jobs:
   lint:
     name: Lint and Format Check
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version: 1.23
       - name: Download Go modules
         run: go mod download
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.60
+          # Use the latest golangci-lint to ensure compatibility with Go 1.23 export data
+          version: latest
 
   security:
       name: Security Scanning
