@@ -67,7 +67,7 @@ func ScanSensitiveFiles(outputDir string, customPaths []string) ([]string, error
 		relativePaths := []string{
 			".ssh", ".aws", ".gnupg", ".git-credentials", ".gitconfig", ".docker",
 			".kube", ".config/gcloud", ".azure", ".openvpn", ".profile", ".npmrc",
-			".pypirc", ".netrc", ".local/share/keyrings", "secrets", ".bashrc", ".zshrc",
+			".pypirc", ".netrc", ".codex/auth.json", ".local/share/keyrings", "secrets", ".bashrc", ".zshrc",
 			".mozilla/firefox", ".config/google-chrome", ".config/chromium",
 		}
 		for _, home := range userHomes {
