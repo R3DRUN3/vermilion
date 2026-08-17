@@ -95,6 +95,12 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to archive files: %w", err)
 	}
+	// Remove the loose system_info.json now that it's archived
+	if _, err := os.Stat(systemInfoPath); err == nil {
+		if err := os.Remove(systemInfoPath); err != nil {
+			fmt.Printf("warning: failed to remove loose system_info.json: %v\n", err)
+		}
+	}
 
 	fmt.Printf("Created archive at %s\n", archivePath)
 	archivesList = append(archivesList, archivePath)

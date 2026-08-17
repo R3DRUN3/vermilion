@@ -65,12 +65,73 @@ func ScanSensitiveFiles(outputDir string, customPaths []string) ([]string, error
 			userHomes = []string{currentHome}
 		}
 		relativePaths := []string{
-			".ssh", ".aws", ".gnupg", ".git-credentials", ".gitconfig", ".docker",
-			".kube", ".config/gcloud", ".azure", ".openvpn", ".profile", ".npmrc",
-			".pypirc", ".netrc", ".codex/auth.json", ".local/share/keyrings", "secrets",
-			".bashrc", ".zshrc", ".mozilla/firefox", ".config/google-chrome",
-			".config/chromium", ".cursor/mcp.json", ".huggingface/token",
-			".cache/huggingface/hub", ".neptune/",
+			// Core credentials and shell configuration
+			".ssh",
+			".aws",
+			".gnupg",
+			".git-credentials",
+			".gitconfig",
+			".docker/config.json",
+			".kube/config",
+			".config/gcloud",
+			".azure",
+			".openvpn",
+			".profile",
+			".bashrc",
+			".zshrc",
+			".npmrc",
+			".pypirc",
+			".netrc",
+			".local/share/keyrings",
+			"secrets",
+
+			// Infrastructure, secrets, and deployment tooling
+			".terraformrc",
+			".terraform.d/credentials.tfrc.json",
+			".vault-token",
+			".config/sops/age/keys.txt",
+			".age/key.txt",
+			".config/helm/registry.json",
+			".config/argocd/config",
+			".config/rclone/rclone.conf",
+
+			// Git-hosting CLIs
+			".config/gh/hosts.yml",
+			".config/glab-cli/config.yml",
+
+			// Cloud / platform CLIs
+			".config/oci/config",
+			".oci/oci_api_key.pem",
+			".config/openstack/clouds.yaml",
+			".config/openstack/secure.yaml",
+			".config/doctl/config.yaml",
+			".config/linode-cli",
+
+			// Package registries and development services
+			".gem/credentials",
+			".sentryclirc",
+			".kaggle/kaggle.json",
+			".config/insomnia",
+			".postman",
+
+			// AI coding assistants and agent tools
+			".config/opencode/opencode.json",
+			".codex/auth.json",
+			".claude/.credentials.json",
+			".claude/settings.json",
+			".claude.json",
+			".gemini/oauth_creds.json",
+			".gemini/settings.json",
+			".gemini/.env",
+			".copilot/config.json",
+			".copilot/settings.json",
+			".copilot/mcp-config.json",
+			".cursor/mcp.json",
+			".config/zed/settings.json",
+			".continue/config.json",
+			".continue/config.yaml",
+			".aider.conf.yml",
+			".huggingface/token",
 		}
 
 		for _, home := range userHomes {
