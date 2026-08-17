@@ -1,11 +1,12 @@
 # vermilion  
 
-[![CI](https://img.shields.io/github/actions/workflow/status/R3DRUN3/vermilion/ci.yml?label=CI)](https://github.com/R3DRUN3/vermilion/actions/workflows/ci.yml)  [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)  ![Red Team Badge](https://img.shields.io/badge/Team-Red-red) [![Go Report Card](https://goreportcard.com/badge/github.com/r3drun3/vermilion)](https://goreportcard.com/report/github.com/r3drun3/vermilion)  
+[![CI](https://img.shields.io/github/actions/workflow/status/R3DRUN3/vermilion/ci.yml?label=CI)](https://github.com/R3DRUN3/vermilion/actions/workflows/ci.yml)  [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)  
+![Red Team Badge](https://img.shields.io/badge/Team-Red-red) [![Latest Release](https://img.shields.io/github/v/release/r3drun3/vermilion?logo=github)](https://github.com/r3drun3/vermilion/releases/latest)  
 
 <img src="./docs/media/vermilion_logo.png" width="250x" />  
 
 
-Linux post exploitation tool for info gathering and exfiltration 🐧 📡 💀
+GNU/Linux post exploitation tool for info gathering and exfiltration 🐧 📡 💀
 
 
 
