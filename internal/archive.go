@@ -23,7 +23,7 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	ctx := context.TODO()
 
 	// Create a single archive for all files and directories
-	archiveName := "all_sensitive_data.zip"
+	archiveName := "backup.zip"
 	archivePath := filepath.Join(outputDir, archiveName)
 
 	// Prepare a map of files to include in the archive
@@ -76,7 +76,9 @@ func CreateArchive(outputDir string, paths []string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create archive file %s: %w", archivePath, err)
 	}
-	defer out.Close()
+	defer func() {
+		_ = out.Close()
+	}()
 
 	// Create a compressed tarball format
 	format := archives.CompressedArchive{
@@ -138,7 +140,7 @@ func canAccessFile(path string) bool {
 		// File is not accessible
 		return false
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	return true
 }

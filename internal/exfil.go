@@ -16,7 +16,7 @@ func Exfiltrate(endpoint, filePath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Get file info for size and name
 	stat, err := file.Stat()
