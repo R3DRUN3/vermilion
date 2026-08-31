@@ -458,7 +458,7 @@ func getPublicIP() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var buf bytes.Buffer
 	_, err = buf.ReadFrom(resp.Body)
