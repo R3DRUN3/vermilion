@@ -48,7 +48,7 @@ func Exfiltrate(endpoint, filePath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to send HTTP request: %w", err)
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 
 	// Read and display the response
 	body, err := io.ReadAll(response.Body)
