@@ -22,7 +22,7 @@ Its primary purpose is to streamline the process of gathering critical data in r
 
 ## How It Works 
 **Vermilion**  is a Linux-focused tool designed for efficient information gathering and sensitive data exfiltration. It collects: 
-- **System Information** : OS details, hostname, network configurations, public and local IPs, active connections, system uptime, and more.
+- **System Information** : OS details, hostname, network configurations, local IPs, active connections, system uptime, and more.
  
 - **Environment Variables** : Captures all available environment variables.
  

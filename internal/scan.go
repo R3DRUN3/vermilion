@@ -1,12 +1,10 @@
 package internal
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net"
-	"net/http"
 	"os"
 	"os/exec"
 	"os/user"
@@ -315,12 +313,12 @@ func GetSystemInfo() (map[string]interface{}, error) {
 	info["local_ips"] = localIPs
 
 	// Get public IP address
-	publicIP, err := getPublicIP()
-	if err == nil {
+	//publicIP, err := getPublicIP()
+	/* if err == nil {
 		info["public_ip"] = publicIP
 	} else {
 		info["public_ip"] = "N/A"
-	}
+	} */
 
 	// Get system uptime
 	uptime, err := getSystemUptime()
@@ -453,7 +451,7 @@ func getInstalledPackages() ([]string, error) {
 }
 
 // getPublicIP fetches the public IP address of the system.
-func getPublicIP() (string, error) {
+/* func getPublicIP() (string, error) {
 	resp, err := http.Get("https://api.ipify.org")
 	if err != nil {
 		return "", err
@@ -467,7 +465,7 @@ func getPublicIP() (string, error) {
 	}
 
 	return buf.String(), nil
-}
+} */
 
 // DetectDefaultShell detects the default shell and returns the history file path.
 func DetectDefaultShell() string {
