@@ -57,6 +57,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v6
         with:
